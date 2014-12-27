@@ -25,7 +25,7 @@ pub macro_rules! try_or(
             }
         }
     );
-)
+);
 
 #[cfg(test)]
 mod test {
