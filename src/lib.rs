@@ -1,7 +1,6 @@
-#![feature(macro_rules)]
 
 #[macro_export]
-pub macro_rules! try_or(
+macro_rules! try_or(
     ($e:expr) => (
         match $e {
             Ok(e) => e,
@@ -40,35 +39,35 @@ mod test {
     }
 
     fn translates() -> Result<(), SillyError> {
-        try_or!(always_bad(), Numb);
-        try_or!(always_bad(), Other);
+        try_or!(always_bad(), SillyError::Numb);
+        try_or!(always_bad(), SillyError::Other);
         Ok(())
     }
 
     #[test]
     fn test_something() {
         match translates() {
-            Ok(_) => fail!("no!"),
-            Err(Numb(_)) => {}
-            Err(Other(_)) => {fail!("other no!")}
+            Ok(_) => panic!("no!"),
+            Err(SillyError::Numb(_)) => {}
+            Err(SillyError::Other(_)) => {panic!("other no!")}
         }
     }
 
-    fn fails_with_int() -> Result<(), uint> {
+    fn fails_with_int() -> Result<(), u32> {
         Err(5)
     }
 
-    fn modify_int() -> Result<(), uint> {
-        try_or!(fails_with_int(), |x: uint| x + 1);
+    fn modify_int() -> Result<(), u32> {
+        try_or!(fails_with_int(), |x: u32| x + 1);
         Ok(())
     }
 
     #[test]
     fn test_modint() {
         match modify_int() {
-            Ok(_) => fail!("not ok man.  not ok"),
+            Ok(_) => panic!("not ok man.  not ok"),
             Err(6) => {},
-            Err(x) => fail!("bad number, {}", x)
+            Err(x) => panic!("bad number, {}", x)
         }
     }
 }
